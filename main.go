@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"videoserver/app/controllers"
+	"videoserver/app/controllers/models"
 	"videoserver/app/controllers/views"
 
 	"github.com/gorilla/handlers"
@@ -18,8 +19,14 @@ func main() {
 
 	r.Handle("/static/{dir}/{file}", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
-	r.HandleFunc("/api/video/{video_id}/{filename}", controllers.RequestHandler)
+	r.HandleFunc("/api/video/{video_id}/{filename}", controllers.ServeHandle)
 
+	r.HandleFunc("/api/video/upload", controllers.UploadHandle)
+
+	r.HandleFunc("/api/videos", controllers.VideoListHandle)
+
+
+	models.Init()
 	corsObj := handlers.AllowedOrigins([]string{"*"})
 
 	fmt.Println("Started server on port 8000")

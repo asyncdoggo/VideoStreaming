@@ -2,3 +2,4 @@ app/videos
 ffmpegcomm
 .env
 tmp
+data.db
