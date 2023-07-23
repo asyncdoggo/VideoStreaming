@@ -80,7 +80,7 @@ func UploadVideo(w http.ResponseWriter, r *http.Request) {
 }
 
 func process_video(uid uuid.UUID, w http.ResponseWriter, r *http.Request) {
-	time.Sleep(5 * time.Second)
+	time.Sleep(1 * time.Second)
 	absPath, _ := filepath.Abs(fmt.Sprintf("app/videos/%s", uid.String()))
 
 	cmd := exec.Command("ffmpeg", "-i", fmt.Sprintf("%s\\video.mp4", absPath), "-codec:", "copy", "-start_number", "0", "-hls_time", "10", "-hls_list_size", "0", "-f", "hls", fmt.Sprintf("%s\\video.m3u8", absPath))

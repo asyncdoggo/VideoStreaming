@@ -22,17 +22,31 @@ document.getElementById("upload_button").addEventListener("click", async functio
     if (file != undefined) {
         var formdata = new FormData()
         formdata.append("file", file, file.name)
-        const response = await fetch("/api/video/upload", {
-            method: 'POST',
-            body: formdata
-        }).then((response) => response.json())
 
-        if (response.status == "success") {
-            document.getElementById("error").innerHTML = "uploaded"
+        const prog = document.getElementById("upload_progress")
+        const response = await uploadFiles("/api/video/upload", formdata, function (progress) {
+            prog.value = progress * 100
+        })
+
+
+        if (response.status == 200) {
             getVideos()
         }
     }
 })
+
+const uploadFiles = (url, formData, onProgress) =>
+    new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.upload.addEventListener('progress', e => onProgress(e.loaded / e.total));
+        xhr.addEventListener('load', () => resolve({ status: xhr.status, body: xhr.responseText }));
+        xhr.addEventListener('error', () => reject(new Error('File upload failed')));
+        xhr.addEventListener('abort', () => reject(new Error('File upload aborted')));
+        xhr.open('POST', url, true);
+        xhr.send(formData);
+    });
+
+
 
 
 async function getVideos() {
